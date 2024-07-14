@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    background-image: url('/cutesy.png');
+    background-size: 1000px;
+    /* Background image will not repeat */
+    background-repeat: repeat;
+    /* Center the background image vertically and horizontally */
+    background-position: center;
+    animation: moveBackground 30s linear infinite;
+    animation-direction: alternate;
+}
+
+@keyframes moveBackground {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 600px 600px;
+  }
+}
