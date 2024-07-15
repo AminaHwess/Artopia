@@ -70,9 +70,9 @@ const Market = () => {
       name: product.name,
       price: product.price,
       image: `http://localhost:8000${product.image}`,
-      quantity: 1, // Default to 1 item when adding to cart
+      quantity: 1,
     });
-  };
+  };  
 
   return (
     <div className="market">
@@ -129,7 +129,7 @@ const Market = () => {
                     <textarea
                       rows="2"
                       placeholder="What's your product price in roman numerals?"
-                      className="textareapop ml-[130px] mb-[10px] w-3/5 h-[70px] relative rounded"
+                      className="textareapop ml-[130px] mb-[10px] w-3/5 h-[70px] relative rounded "
                       onInput={handleTextareaInput}
                       {...register("price")}
                       required
@@ -163,7 +163,7 @@ const Market = () => {
               </p>
             </>
           )}
-          <div className="row flex flex-wrap justify-between w-full">
+          <div className="row flex flex-wrap justify-between w-full ">
             {loading ? (
               <p>Loading...</p>
             ) : error ? (
@@ -176,7 +176,7 @@ const Market = () => {
                   key={product.product_id}
                   className="col-sm-6 col-lg-4 basis-[calc(33.333%-20px)] mb-5"
                 >
-                  <div className="box inline-block flex-col items-center p-4 mt-4 relative overflow-hidden w-[94%]">
+                  <div className="box inline-block flex-col items-center p-4 mt-4 relative overflow-hidden w-[94%] bg-white">
                     <div className="img-box bg-gray-200 w-full h-[275px] flex justify-center items-center relative p-4 group">
                       <div className="absolute top-0 left-0 flex items-center">
                         <figure className="w-[50px] sm:w-[50px] rounded-full overflow-hidden mb-2 sm:mb-0 sm:mr-4">
