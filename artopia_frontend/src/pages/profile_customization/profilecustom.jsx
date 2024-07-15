@@ -1,32 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, useScroll } from "framer-motion";
 import Footer from "../../components/Footer/Footer.jsx";
 import AxiosInstance from "../Axios/AxiosInstance.jsx";
 
-const ProfileCustom = ({ resetForm }) => {
+const ProfileCustom = () => {
   const { scrollYProgress } = useScroll();
   const [selectedFile, setSelectedFile] = useState(null);
   const [bio, setBio] = useState("");
   const [selectedFileName, setSelectedFileName] = useState("No file chosen");
-  const [loading, setLoading] = useState(true);  // Track loading state
   const [profileImage, setProfileImage] = useState("");  // Track profile image URL
 
-  // Retrieve user_id from localStorage
   const loggedInUserId = localStorage.getItem("UserId");
 
-  useEffect(() => {
-    // Fetch the existing user profile to populate initial values
-    AxiosInstance.get(`profile/${loggedInUserId}/`)
-      .then(response => {
-        setBio(response.data.bio || "");  // Set bio from response data
-        setProfileImage(response.data.image || "");  // Set profile image URL
-        setSelectedFileName(response.data.image ? response.data.image.split('/').pop() : "No file chosen");  // Extract the file name
-        setLoading(false);  // Stop loading once data is fetched
-      })
-      .catch(error => {
-        console.error("Failed to fetch user profile:", error);
-      });
-  }, [loggedInUserId]);
 
   // Function to handle file selection
   const handleFileChange = (event) => {
@@ -41,7 +26,7 @@ const ProfileCustom = ({ resetForm }) => {
   };
 
   const handleBioChange = (event) => {
-    setBio(event.target.value);  // Update the bio state
+    setBio(event.target.value);
   };
 
   const handleSubmit = (event) => {
@@ -60,22 +45,18 @@ const ProfileCustom = ({ resetForm }) => {
       },
     })
     .then(() => {
-      // Clear the form fields and reset the state
       setBio("");  // Clear the bio state
       setSelectedFile(null);  // Clear the selected file
       setSelectedFileName("No file chosen");  // Reset the file name
       setProfileImage("");  // Clear the profile image state
       alert("Profile updated successfully!");
+      window.location.reload();
     })
     .catch((error) => {
       console.error("Profile update failed:", error);
     });
   };
 
-  // Display loading message if data is still being fetched
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div>
@@ -99,12 +80,11 @@ const ProfileCustom = ({ resetForm }) => {
             rows="2"
             placeholder="Tell us a bit about yourself !"
             className="w-[90%] p-[12px] border-2 border-[#9e8b96] rounded-[5px] text-[16px] box-border mb-[40px] ml-[20px] h-[200px] text-center"
-            value={bio}
             onChange={handleBioChange}
           ></textarea>
           <div className="relative">
             <label htmlFor="file-upload" className="absolute top-0 left-0">
-              <img className="w-[15%] bg-[#f33ec9] rounded-[15px] ml-[20px] mb-[-7px]" src="\src\assets\plus.png" alt="Upload" />
+              <img className="w-[15%] bg-[#f33ec9] rounded-[15px] ml-[20px] mb-[-7px] cursor-pointer" src="\src\assets\plus.png" alt="Upload" />
             </label>
             <input
               type="file"
@@ -117,7 +97,6 @@ const ProfileCustom = ({ resetForm }) => {
           <p className="inline-block align-middle ml-[70px] mt-[-8px]">{selectedFileName}</p>
           <input
             type="submit"
-            value="Submit"
             className="w-[30%] p-[12px] bg-[#d226aa] border-none text-white text-[16px] font-bold rounded-[5px] cursor-pointer transition-colors duration-300 ease-in-out shadow-[0_0_10px_0_rgba(0,0,0,0.5)] mt-[25px] ml-[130px] relative hover:bg-[#98246c] hover:shadow-[0_4px_6px_rgba(0,0,0,0.3)]"
           />
         </form>
