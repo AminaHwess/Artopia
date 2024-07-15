@@ -23,9 +23,12 @@ const Userprofile = () => {
         const profileResponse = await AxiosInstance.get(`/profile/${userId}/`);
         setProfile(profileResponse.data);
 
-        // Fetch the user's posts with filtering
-        const postsResponse = await AxiosInstance.get(`/posts/artcafeposts/`);
-        setPosts(postsResponse.data.filter((post) => post.user_id == userId));
+        // Fetch the user's posts with filtering and sorting
+        const postsResponse = await AxiosInstance.get(`posts/artcafeposts/`);
+        const filteredAndSortedPosts = postsResponse.data
+          .filter((post) => post.user_id == userId)
+          .sort((a, b) => b.post_id - a.post_id);
+        setPosts(filteredAndSortedPosts);
       } catch (error) {
         console.error("Error fetching profile or posts:", error);
         setError(error.message || "Error fetching profile or posts!");
@@ -57,7 +60,7 @@ const Userprofile = () => {
               <Popup
                 trigger={
                   <button className="absolute left-1 top-0 mt-2 mr-2 bg-pink-500 rounded-md p-1">
-                    <img className="w-10" src="\plus.png" />
+                    <img className="w-10" src="\src\assets\plus.png" />
                   </button>
                 }
                 modal
