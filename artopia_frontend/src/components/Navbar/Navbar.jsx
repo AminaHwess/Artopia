@@ -16,35 +16,13 @@ const Navbar = () => {
       navigate("/");
     });
   };
-
-  useEffect(() => {
-    if (!token) {
-      const submission = (data) => {
-        AxiosInstance.post("login/", {
-          username: data.username,
-          password: data.password,
-        })
-          .then((response) => {
-            localStorage.setItem("Token", response.data.token);
-            localStorage.setItem("UserId", response.data.userId);
-            setToken(response.data.token); // Update the token in the state
-            setUserId(response.data.userId); // Update the user ID in the state
-            navigate(`/userprofile/${response.data.userId}`);
-          })
-          .catch((error) => {
-            console.error("Login error", error);
-          });
-      };
-    }
-  }, [token, navigate]);
-
   return (
     <div className="relative top-0 left-0 w-full bg-transparent z-10 p-2.5 flex justify-center items-center">
       <nav className="flex flex-col md:flex-row justify-between items-center w-full max-w-screen-lg">
         <div className="flex items-center mb-2.5 md:mb-0">
           <Link to="/" className="flex items-center">
             <img
-              src="/logonobg.png"
+              src="/src/assets/logonobg.png"
               alt="Logo"
               className="h-15 w-auto mr-10"
               style={{ height: "60px" }}
@@ -74,6 +52,7 @@ const Navbar = () => {
             </Link>
           </li>
           {!token && (
+            <>
             <li className="mb-2 md:mb-0 md:mr-5">
               <Link to="/login">
                 <button className="text-black cursor-pointer rounded-md px-8 py-3 bg-white transition duration-200 font-mono font-bold hover:text-white hover:bg-pink-400 hover:transform hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[0.25rem_0.25rem_white] active:transform-none active:shadow-none">
@@ -81,6 +60,14 @@ const Navbar = () => {
                 </button>
               </Link>
             </li>
+            <li className="mb-2 md:mb-0 md:mr-5">
+              <Link to="/signup">
+                <button className="text-black cursor-pointer rounded-md px-8 py-3 bg-white transition duration-200 font-mono font-bold hover:text-white hover:bg-pink-400 hover:transform hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[0.25rem_0.25rem_white] active:transform-none active:shadow-none">
+                  Sign Up
+                </button>
+              </Link>
+            </li>
+            </>
           )}
           {token && (
             <>
