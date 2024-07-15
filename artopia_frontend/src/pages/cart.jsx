@@ -1,5 +1,5 @@
 import React from "react";
-import { CartProvider, useCart } from "react-use-cart";
+import { useCart } from "react-use-cart";
 import Navbar from "../components/Navbar/Navbar";
 import Footer from "../components/Footer/Footer.jsx";
 
@@ -14,6 +14,7 @@ const Cart = () => {
         <p className="text-[#d5168c] text-[170px] font-normal font-[freight-big-pro] tracking-[-6.5px] text-center overflow-break-word">
           Your cart is empty ☹️
         </p>
+        <Footer />
       </>
     );
 
@@ -31,23 +32,15 @@ const Cart = () => {
               <div className="cart-item-details">
                 <div className="cart-item-buttons flex items-center gap-4">
                   <span className="font-[Arial, Helvetica, sans-serif] text-lg font-bold">
-                    {item.quantity} x {item.name}
+                    1 x {item.name}
                   </span>
                   <button
                     onClick={() =>
-                      updateItemQuantity(item.id, item.quantity - 1)
+                      updateItemQuantity(item.id, 0)
                     }
                     className="text-blueviolet text-[20px] font-extrabold text-shadow-md"
                   >
                     -
-                  </button>
-                  <button
-                    onClick={() =>
-                      updateItemQuantity(item.id, item.quantity + 1)
-                    }
-                    className="text-blueviolet text-[20px] font-extrabold text-shadow-md"
-                  >
-                    +
                   </button>
                   <button
                     onClick={() => removeItem(item.id)}
