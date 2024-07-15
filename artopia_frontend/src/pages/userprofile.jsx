@@ -77,7 +77,7 @@ const Userprofile = () => {
               </Popup>
             )}
             <div className="pl-4 flex-grow">
-              <h2 className="text-black text-2xl mb-2 font-sans">
+              <h2 className="text-black text-2xl mb-2 font-sans font-bold">
                 {profile.username}
               </h2>
               <p className="text-black text-lg indent-5 mt-5 max-w-xs ml-[-2px] font-cursive">
