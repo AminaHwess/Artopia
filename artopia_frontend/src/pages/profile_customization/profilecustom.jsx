@@ -66,7 +66,7 @@ const ProfileCustom = () => {
         style={{ scaleX: scrollYProgress }}
       />
 
-      {/* BioField Form */}
+      {/* Bio Field Form */}
       <div className="w-[400px] max-w-full h-[700px] mx-auto mt-[1px] bg-white rounded-lg shadow-lg font-[Poppins, sans-serif] shadow-[#00000033] relative mb-[50px] mr-[550px]">
         <h1 className="text-center text-[30px] font-extrabold text-[#0f0f0f] pt-[20px] pb-[20px] font-[Super Normal]">
           Customize Your Profile
