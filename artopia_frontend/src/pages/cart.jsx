@@ -4,7 +4,8 @@ import Navbar from "../components/Navbar/Navbar";
 import Footer from "../components/Footer/Footer.jsx";
 
 const Cart = () => {
-  const { isEmpty, totalUniqueItems, items, updateItemQuantity, removeItem } =useCart();
+  const { isEmpty, totalUniqueItems, items, updateItemQuantity, removeItem } =
+    useCart();
 
   if (isEmpty)
     return (

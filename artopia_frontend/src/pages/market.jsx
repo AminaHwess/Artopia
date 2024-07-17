@@ -7,6 +7,7 @@ import "reactjs-popup/dist/index.css";
 import { useForm } from "react-hook-form";
 import Footer from "../components/Footer/Footer.jsx";
 import AxiosInstance from "./Axios/AxiosInstance.jsx";
+import { CirclePlus, Image, DiamondPlus } from 'lucide-react'
 
 const Market = () => {
   const { addItem } = useCart();
@@ -84,27 +85,25 @@ const Market = () => {
 
       <section className="product_section layout_padding">
         <div className="container">
-          <div className="heading_container heading_center mb-6 text-center font-sans text-lg">
+          <div className="md:text-7xl sm:text-6xl text-5xl text-[#ff90e8] font-serif font-bold md:py-6 flex justify-center">
             <h2>Our Products</h2>
           </div>
           {Token && (
             <>
               <Popup
                 trigger={
-                  <button className="buttonpopup">
-                    <img
-                      className="buttonimg w-10 mr-24 mb-2 bg-pink-500 rounded-lg"
-                      src="src/assets/plus.png"
-                    />
+                  <button className="buttonpopup ml-8">
+                    <CirclePlus strokeWidth={3} color="#ff90e8" />
                   </button>
                 }
                 modal
                 contentStyle={{
-                  backgroundColor: "#D492DC",
-                  padding: "20px",
-                  borderRadius: "10px",
+                  backgroundColor: "#FFFFFF",
+                  padding: "20px",  // Reduced padding for mobile
+                  borderRadius: "15px",  // Slightly smaller border radius for mobile
                   zIndex: "1000",
-                  width: "30%",
+                  width: "90%",  // Increased width for mobile
+                  maxWidth: "500px",  // Maximum width to ensure it doesn’t get too large on larger screens
                 }}
               >
                 <span>
@@ -113,11 +112,11 @@ const Market = () => {
                     onSubmit={handleSubmit(submission)}
                     encType="multipart/form-data"
                   >
-                    <div className="relative">
-                      <img
-                        className="uploadpic w-1/5 mb-[-75px] relative"
-                        src="src/assets/uploadpic.png"
-                      />
+                    <div className="relative mt-3 font-mono text-gray-400">
+                      <h1 className="text-center md:text-3xl text-2xl font-bold font-serif">
+                        SELL <span className="text-[#ff90e8]">YOUR</span> ART
+                      </h1>
+                      <Image strokeWidth={3} color="#ff90e8" size={30} className="cursor-pointer" />
                       <input
                         type="file"
                         className="absolute inset-0 opacity-0 cursor-pointer"
@@ -128,8 +127,8 @@ const Market = () => {
 
                     <textarea
                       rows="2"
-                      placeholder="What's your product price in roman numerals?"
-                      className="textareapop ml-[130px] mb-[10px] w-3/5 h-[70px] relative rounded "
+                      placeholder="Price"
+                      className="textareapop3 w-full relative z-10 rounded mt-8 font-mono"
                       onInput={handleTextareaInput}
                       {...register("price")}
                       required
@@ -137,28 +136,28 @@ const Market = () => {
 
                     <textarea
                       rows="2"
-                      placeholder="write your product's name"
-                      className="textareapop3 w-full relative z-10 rounded"
+                      placeholder="Write Your Product's Name"
+                      className="textareapop3 w-full relative z-10 rounded font-mono"
                       {...register("name")}
                       required
                     ></textarea>
                     <textarea
                       rows="2"
-                      placeholder="write your product's description"
-                      className="textareapop2 w-full relative z-10 rounded"
+                      placeholder="Write Your Product's Description"
+                      className="textareapop2 w-full relative z-10 rounded font-mono"
                       {...register("description")}
                       required
                     ></textarea>
                     <button
                       type="submit"
-                      className="relative ml-[350px] top-[10px] bg-pink-500 text-white py-2 px-4 rounded hover:bg-pink-600"
+                      className="relative top-[10px] md:ml-40 ml-20 bg-pink-500 text-white py-2 px-12 rounded hover:bg-pink-600 font-mono"
                     >
                       Post
                     </button>
                   </form>
                 </span>
               </Popup>
-              <p className="popupp ml-[-90px] relative top-[-20px] font-serif text-lg font-extrabold border-4 border-pink-600 bg-[#cf2a8d75] p-1 inline">
+              <p className="popupp ml-3 relative bottom-1 font-serif text-lg font-extrabold p-1 inline text-[#ff90e8]">
                 Sell Your Art
               </p>
             </>
@@ -173,58 +172,54 @@ const Market = () => {
             ) : (
               products.map((product) => (
                 <div
-                  key={product.product_id}
-                  className="col-sm-6 col-lg-4 basis-[calc(33.333%-20px)] mb-5"
-                >
-                  <div className="box inline-block flex-col items-center p-4 mt-4 relative overflow-hidden w-[94%] bg-white">
-                    <div className="img-box bg-gray-200 w-full h-[275px] flex justify-center items-center relative p-4 group">
-                      <div className="absolute top-0 left-0 flex items-center">
-                        <figure className="w-[50px] sm:w-[50px] rounded-full overflow-hidden mb-2 sm:mb-0 sm:mr-4">
-                          <img
-                            src={`http://localhost:8000${product.user_image}`}
-                            alt="Profile"
-                            className="rounded-full h-[50px] w-[50px]"
-                          />
-                        </figure>
-                        <p className="text-xl font-bold mb-3">
-                          {product.username}
-                        </p>
-                      </div>
-                      <img
-                        src={`http://localhost:8000${product.image}`}
-                        alt={product.name}
-                        className="h-[175px] max-w-full"
-                      />
-                      {Token && (
-                        <button
-                          className="add_cart_btn inline-block w-[175px] text-center h-[45px] leading-[45px] bg-gray-500 text-white absolute bottom-1/2 left-1/2 transform translate-x-[-50%] translate-y-[50%] transition-colors duration-300 opacity-0 z-10 group-hover:opacity-100 group-hover:bg-pink-500"
-                          onClick={() => handleAddToCart(product)}
-                        >
-                          <span>Add To Cart</span>
-                        </button>
-                      )}
-                    </div>
+  key={product.product_id}
+  className="col-12 lg:col-sm-6 lg:col-lg-4 mb-5"
+>
+  <div className="box inline-block flex-col items-center p-4 mt-4 relative overflow-hidden w-full bg-white rounded-lg shadow-md">
+    <div className="img-box bg-gray-200 w-full h-[275px] flex justify-center items-center relative p-4 group">
+      <div className="absolute top-0 left-0 flex items-center p-2 bg-white rounded-full shadow-md">
+        <figure className="w-[50px] sm:w-[50px] rounded-full overflow-hidden mb-2 sm:mb-0 sm:mr-4">
+          <img
+            src={`http://localhost:8000${product.user_image}`}
+            alt="Profile"
+            className="rounded-full h-[30px] w-[30px] md:ml-3"
+          />
+        </figure>
+        <p className="text-lg font-semibold">{product.username}</p>
+      </div>
+      <img
+        src={`http://localhost:8000${product.image}`}
+        alt={product.name}
+        className="h-[200px] max-w-full object-cover rounded-lg"
+      />
+      {Token && (
+        <button
+          className="add_cart_btn w-[60px] h-[60px] text-white absolute bottom-2 left-1/2 
+            transform translate-x-[-50%] transition-colors duration-300 opacity-0 group-hover:opacity-100 
+            group-hover:bg-pink-500 rounded-full flex justify-center items-center"
+          onClick={() => handleAddToCart(product)}
+        >
+          <DiamondPlus size={24} color="#ffffff" />
+        </button>
+      )}
+    </div>
+    <div className="detail-box pt-4 flex-col w-full">
+      <h5 className="text-xl font-bold mb-2">{product.name}</h5>
+      <h5 className="text-base mb-2">{product.description}</h5>
+      <div className="product_info flex justify-between items-center">
+        <h5 className="font-bold text-lg">
+          <span>$</span> {product.price}
+        </h5>
+        <div className="star_container text-[#f2b01e] flex items-center">
+          {[...Array(5)].map((_, index) => (
+            <i key={index} className="fa fa-star" aria-hidden="true"></i>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-                    <div className="detail-box pt-4 flex-col w-full">
-                      <h5 className="text-xl font-bold mb-3">{product.name}</h5>
-
-                      <h5 className="text-l mb-3">{product.description}</h5>
-
-                      <div className="product_info flex justify-between">
-                        <h5 className="font-bold">
-                          <span>$</span> {product.price}
-                        </h5>
-                        <div className="star_container text-[#f2b01e]">
-                          <i className="fa fa-star" aria-hidden="true"></i>
-                          <i className="fa fa-star" aria-hidden="true"></i>
-                          <i className="fa fa-star" aria-hidden="true"></i>
-                          <i className="fa fa-star" aria-hidden="true"></i>
-                          <i className="fa fa-star" aria-hidden="true"></i>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               ))
             )}
           </div>
@@ -233,7 +228,8 @@ const Market = () => {
             <div className="btn_box flex justify-center mt-12">
               <a
                 href="/cart"
-                className="view_more-link inline-block py-2 px-12 bg-pink-500 text-white rounded border border-pink-600 transition-colors duration-300 hover:bg-transparent hover:text-pink-500"
+                className="view_more-link inline-block py-2 px-12 bg-pink-500 text-white rounded border border-pink-600 transition-colors duration-300 
+                hover:bg-transparent hover:text-pink-500"
               >
                 View Cart
               </a>

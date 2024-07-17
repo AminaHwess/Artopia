@@ -106,7 +106,7 @@ const Signup = () => {
           Sign up to
         </h1>
         <img
-          src="/artopialogo.png"
+          src="src/assets/artopialogo.png"
           id="logo"
           className="w-[80%] ml-[30px]"
           alt="Artopia Logo"

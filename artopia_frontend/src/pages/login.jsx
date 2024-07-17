@@ -49,7 +49,7 @@ const Login = () => {
           Login to
         </h1>
         <img
-          src="artopialogo.png"
+          src="src/assets/artopialogo.png"
           className="w-4/5 ml-8"
           alt="Logo"
         />

@@ -6,6 +6,7 @@ import AxiosInstance from "./Axios/AxiosInstance.jsx";
 import ProfileCustom from "./profile_customization/profilecustom.jsx";
 import Popup from "reactjs-popup";
 import Navbar from "../components/Navbar/Navbar.jsx";
+import { Settings } from "lucide-react";
 
 const Userprofile = () => {
   const { userId } = useParams();
@@ -47,37 +48,45 @@ const Userprofile = () => {
     <div>
       <Navbar />
       <div className="container-fluid p-0">
-        <div className="w-1/6 mx-auto mt-12 p-0 relative bg-[#fdfdfd] rounded-lg sm:w-[50%] sm:mx-auto p-4 sm:p-6 shadow-lg shadow-pink-500/50">
+        <div
+          className="md:w-2/6 w-4/6 mx-auto mt-12 p-0 relative bg-[#fdfdfd] rounded-lg sm:w-[50%] sm:mx-auto p-4 sm:p-6 
+        shadow-lg"
+        >
           <div className="p-4 flex flex-col sm:flex-row items-start justify-between">
             <div className="p-5 -mt-5">
               <img
                 src={profile.image}
                 alt="Profile"
-                className="rounded-full bg-white shadow-lg w-48 h-48 mx-auto"
+                className="rounded-full bg-white shadow-lg md:w-30 h-30 mx-auto object-cover"
               />
             </div>
             {token && loggedInUserId === userId && (
               <Popup
                 trigger={
-                  <button className="absolute left-1 top-0 mt-2 mr-2 bg-pink-500 rounded-md p-1">
-                    <img className="w-10" src="\src\assets\plus.png" />
+                  <button className="absolute left-1 top-0 mt-2 mr-2 ml-3  rounded-md p-2  transition-colors duration-300">
+                    <Settings strokeWidth={2} color="#ff90e8" />
                   </button>
                 }
                 modal
                 contentStyle={{
-                  backgroundColor: "#D492DC",
-                  padding: "20px",
-                  borderRadius: "10px",
+                  backgroundColor: "#FFFFFF",
+                  padding: "20px", // Padding for mobile
+                  borderRadius: "15px", // Border radius for mobile
                   zIndex: "1000",
-                  width: "30%",
-                  height: "750px",
+                  width: "90%", // Width for mobile
+                  maxWidth: "500px", // Maximum width
+                }}
+                overlayStyle={{
+                  backgroundColor: "rgba(0, 0, 0, 0.5)", // Optional: Semi-transparent background
                 }}
               >
-                <ProfileCustom />
+                <span>
+                  <ProfileCustom />
+                </span>
               </Popup>
             )}
             <div className="pl-4 flex-grow">
-              <h2 className="text-black text-2xl mb-2 font-sans font-bold">
+              <h2 className="text-black md:text-2xl text-xl mb-2 font-serif font-bold">
                 {profile.username}
               </h2>
               <p className="text-black text-lg indent-5 mt-5 max-w-xs ml-[-2px] font-cursive">
@@ -88,37 +97,40 @@ const Userprofile = () => {
         </div>
       </div>
       {/* Post Box */}
-      <div className="bg-[#fdfdfd] rounded-lg mx-auto mt-12 p-6 shadow-lg shadow-pink-500/50 w-full sm:w-[90%]">
+      <div className="rounded-lg mx-auto mt-12 p-6 w-full sm:w-[90%]">
         <div className="user-post">
           {/* Loop through the user's posts */}
           {posts.length > 0 ? (
             posts.map((postItem) => (
               <div
                 key={postItem.post_id}
-                className="post-container bg-white rounded-lg p-4 sm:p-6 mb-6 shadow-lg shadow-pink-500/50 relative"
+                className="post-container bg-white rounded-2xl p-4 sm:p-6 mb-6 shadow-lg  relative"
               >
-                <div className="post-header flex flex-col sm:flex-row items-start sm:items-center mb-4">
-                  <figure className="w-[30%] sm:w-[10%] rounded-full overflow-hidden mb-2 sm:mb-0 sm:mr-4">
+                <div className="post-header md:flex md:flex-row  md:items-center flex mb-4">
+                  <figure className="w-12 h-12 rounded-full overflow-hidden mr-4">
                     <img
                       src={`http://localhost:8000${postItem.user_image}`}
                       alt="Profile"
-                      className="rounded-full h-[50px] w-[50px]"
+                      className="w-full h-full object-cover"
                     />
                   </figure>
                   <div className="flex-1">
-                    <ins className="block text-base sm:text-lg font-bold">
+                    <div className="flex items-center space-x-2 mb-1">
                       <Link
                         to={`/userprofile/${postItem.user_id}`}
-                        className="no-underline text-black"
+                        className="text-black font-bold text-lg sm:text-xl"
                       >
                         {postItem.username}
                       </Link>
-                    </ins>
-                    <span className="text-gray-500 text-sm">{`published: ${new Date(
-                      postItem.date_created
-                    ).toLocaleString()}`}</span>
+                    </div>
+                    <span className="text-gray-500 text-sm">
+                      {`Published: ${new Date(
+                        postItem.date_created
+                      ).toLocaleString()}`}
+                    </span>
                   </div>
                 </div>
+
                 <div className="post-content mb-4">
                   {postItem.file &&
                     (postItem.file.endsWith(".mp4") ? (
@@ -135,13 +147,13 @@ const Userprofile = () => {
                       <img
                         src={`http://localhost:8000${postItem.file}`}
                         alt="Post Content"
-                        className="w-full sm:w-[50%] mx-auto object-cover"
+                        className="w-[400px] mx-auto object-cover"
                       />
                     ))}
-                  <p className="text-base mt-4">{postItem.description}</p>
+                  <p className="text-base mt-8">{postItem.description}</p>
                 </div>
                 <div className="post-interactions flex flex-col sm:flex-row items-start sm:items-center mb-4">
-                  <ul className="flex flex-col sm:flex-row flex-grow space-y-2 sm:space-x-4 sm:space-y-0">
+                  <ul className="flex flex-wrap gap-4 sm:flex-nowrap sm:space-x-4">
                     <li className="flex items-center text-sm">
                       <span
                         className="text-lg font-light cursor-pointer hover:scale-110 transition-transform"
@@ -176,7 +188,7 @@ const Userprofile = () => {
                 </div>
 
                 {/* Comment Area */}
-                <div className="comment-area mt-4">
+                <div className="comment-area mt-4 bg-white p-4">
                   <ul className="space-y-4">
                     {postItem.comments && postItem.comments.length > 0 ? (
                       postItem.comments.map((comment, index) => (
@@ -188,24 +200,26 @@ const Userprofile = () => {
                                 "src/assets/profile_pics/default.jpg"
                               }
                               alt="Comment Avatar"
-                              className="rounded-full w-16 h-16"
+                              className="rounded-full w-12 h-12"
                             />
                           </div>
-                          <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg flex-1">
-                            <div className="mb-2">
-                              <Link
-                                to={`/userprofile/${comment.user_id}`}
-                                className="text-black font-bold"
-                              >
-                                {comment.username}
-                              </Link>
-                              <span className="text-gray-500 text-sm ml-2">
-                                {new Date(
-                                  comment.date_created
-                                ).toLocaleDateString()}
-                              </span>
+                          <div className="flex-1">
+                            <div className=" p-4 rounded-lg">
+                              <div className="mb-2">
+                                <Link
+                                  to={`/userprofile/${comment.user_id}`}
+                                  className="text-black font-bold"
+                                >
+                                  {comment.username}
+                                </Link>
+                                <span className="text-gray-500 text-sm ml-2">
+                                  {new Date(
+                                    comment.date_created
+                                  ).toLocaleDateString()}
+                                </span>
+                              </div>
+                              <p className="text-gray-800">{comment.comment}</p>
                             </div>
-                            <p className="text-gray-800">{comment.comment}</p>
                           </div>
                         </li>
                       ))
@@ -225,17 +239,17 @@ const Userprofile = () => {
                             comment: formData.get("comment"),
                           });
                         }}
-                        className="flex flex-col items-end w-full max-w-full"
+                        className="flex flex-col items-center w-full max-w-lg"
                       >
                         <textarea
                           name="comment"
                           placeholder="Post your comment"
                           required
-                          className="bg-gray-100 border-[#6d0666] border-2 p-2 w-full h-16 text-black text-sm mb-2 rounded-lg resize-none"
+                          className=" border-2 p-2 w-full h-16 text-black text-sm mb-2 rounded-lg resize-none"
                         ></textarea>
                         <button
                           type="submit"
-                          className="bg-[#6d0666] text-white rounded-lg px-4 py-2 mt-2 cursor-pointer text-sm sm:text-base w-[10%] self-end"
+                          className="bg-[#6d0666] text-white rounded-lg px-4 py-2 mt-2 cursor-pointer text-sm sm:text-base w-full max-w-xs"
                         >
                           Post
                         </button>
