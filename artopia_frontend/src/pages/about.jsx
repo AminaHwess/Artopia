@@ -42,7 +42,7 @@ const About = () => {
               >
                 <div>
                   <img
-                    src="/src/assets/slider/educationalartposts.JPG"
+                    src="/slider/educationalartposts.JPG"
                     alt="Image 1"
                     className="w-full h-auto block mx-auto brightness-[0.9] contrast-[1.9] 
                     image-rendering-auto rounded-[15px] object-cover mt-[37px]"
