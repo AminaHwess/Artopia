@@ -7,7 +7,6 @@ from django.contrib.auth import get_user_model, authenticate
 from knox.models import AuthToken
 from rest_framework.generics import RetrieveUpdateAPIView
 from django.shortcuts import get_object_or_404
-from rest_framework.exceptions import PermissionDenied
 from rest_framework import status
 
 

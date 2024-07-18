@@ -45,20 +45,19 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     Custom user model extending AbstractBaseUser and PermissionsMixin.
     Allows for customization of the user model beyond Django's default User model.
     """
-    username = models.CharField(max_length=15, unique=True)  # Unique username with email validation
-    email = models.EmailField(validators=[validate_email], unique=True)  # Unique email field with validation
-    date_joined = models.DateTimeField(default=timezone.now)  # Timestamp for when the user joined
+    username = models.CharField(max_length=15, unique=True)  
+    email = models.EmailField(validators=[validate_email], unique=True)  
+    date_joined = models.DateTimeField(default=timezone.now)  
 
 
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     
-    REQUIRED_FIELDS = ['email']  # Fields required when creating a user through the command line
-    USERNAME_FIELD = 'username'  # Username field used as the identifier
+    REQUIRED_FIELDS = ['email']  
+    USERNAME_FIELD = 'username'  
 
-    objects = CustomUserManager()  # Set the custom manager for the model
+    objects = CustomUserManager()  
 
-    # Override methods to customize user permissions and staff status checks
     
 
 class UserProfile(models.Model):
