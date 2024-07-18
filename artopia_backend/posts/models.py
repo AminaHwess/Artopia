@@ -18,4 +18,17 @@ class Post(models.Model):
 
     def dislikes_count(self):
         return self.dislikes.count()
+
+#Comment model
+
+class Comment(models.Model):
+    userprofile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='comment')
+    posts = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='posts')
+    date_created = models.DateTimeField(default=timezone.now)
+    content = models.CharField(max_length=100, blank=False)
+
+    def __str__(self):
+        return self.userprofile.user.username
+
+
     
