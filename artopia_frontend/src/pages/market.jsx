@@ -35,7 +35,6 @@ const Market = () => {
       });
       window.location.reload();
     } catch (error) {
-      console.error("Error posting your product:", error);
       setError("Error posting your product");
     }
   };
@@ -44,10 +43,8 @@ const Market = () => {
     const fetchProducts = async () => {
       try {
         const response = await AxiosInstance.get("market/products/");
-        console.log("Products fetched: ", response.data);
         setProducts(response.data.sort((a, b) => b.product_id - a.product_id));
       } catch (error) {
-        console.error("Error fetching products:", error);
         setError("Error fetching products");
       } finally {
         setLoading(false);

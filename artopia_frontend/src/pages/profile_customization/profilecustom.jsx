@@ -50,9 +50,6 @@ const ProfileCustom = () => {
       setProfileImage("");  // Clear the profile image state
       window.location.reload();
     })
-    .catch((error) => {
-      console.error("Profile update failed:", error);
-    });
   };
 
   return (

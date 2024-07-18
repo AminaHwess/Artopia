@@ -40,7 +40,6 @@ const Artcafe = () => {
       });
       window.location.reload();
     } catch (error) {
-      console.error("Error posting new art cafe post:", error);
       setError("Error posting new art cafe post");
     }
   };
@@ -63,22 +62,15 @@ const Artcafe = () => {
       if (response.status === 201 || response.status === 200) {
         window.location.reload();
       }
-    } catch (error) {
-      console.error(
-        "Error submitting comment:",
-        error.response ? error.response.data : error.message // More specific error message
-      );
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
         const response = await AxiosInstance.get("posts/artcafeposts/");
-        console.log("Posts fetched: ", response.data);
         setPost(response.data.sort((a, b) => b.post_id - a.post_id));
       } catch (error) {
-        console.error("Error fetching posts:", error);
         setError("Error fetching posts");
       } finally {
         setLoading(false);
@@ -92,10 +84,8 @@ const Artcafe = () => {
     const fetchComment = async () => {
       try {
         const response = await AxiosInstance.get("posts/artcafepost/comments");
-        console.log("Comments fetched: ", response.data);
         setComment(response.data.sort((a, b) => b.comment_id - a.comment_id));
       } catch (error) {
-        console.error("Error fetching comments:", error);
         setError("Error fetching comments");
       } finally {
         setLoading(false);
@@ -106,14 +96,17 @@ const Artcafe = () => {
   }, []);
 
   const deletepost = (postId) => {
-    AxiosInstance.delete(`posts/artcafepost/${postId}/`)
-      .then((response) => {
-        console.log("Delete successful", response);
-        window.location.reload();
-      })
-      .catch((error) => {
-        console.error("Error during delete", error);
-      });
+    AxiosInstance.delete(`posts/artcafepost/${postId}/`).then((response) => {
+      window.location.reload();
+    });
+  };
+
+  const deletecomment = (postId, commentId) => {
+    AxiosInstance.delete(
+      `posts/artcafepost/${postId}/comments/${commentId}`
+    ).then((response) => {
+      window.location.reload();
+    });
   };
 
   return (
@@ -324,12 +317,30 @@ const Artcafe = () => {
                                     {comment.username}
                                   </Link>
                                 </ins>
+
                                 <span className="text-gray-500 text-sm">
                                   {new Date(
                                     comment.date_created
                                   ).toLocaleDateString()}
                                 </span>
+                                {Token &&
+                                  loggedInUserId.toString() ===
+                                    comment.user_id.toString() && (
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        deletecomment(
+                                          postItem.post_id,
+                                          comment.comment_id
+                                        )
+                                      }
+                                      className="md:ml-[850px] bg-[#ff90e8] text-white rounded-lg px-4 sm:px-5 py-2.5 cursor-pointer text-sm sm:text-base"
+                                    >
+                                      Delete
+                                    </button>
+                                  )}
                               </div>
+
                               <p className="text-base">{comment.content}</p>
                             </div>
                           </div>

@@ -21,14 +21,12 @@ const Login = () => {
       password: data.password,
     })
       .then((response) => {
-        console.log(response);
         localStorage.setItem("Token", response.data.token);
         localStorage.setItem("UserId", response.data.userId);
         const userId = response.data.userId;
         navigate(`/userprofile/${userId}`);
       })
       .catch((error) => {
-        console.error("Error during login", error);
         setShowMessage(true);
         setErrorMessage(error.response?.data?.error || "Username or Password is incorrect");
       });

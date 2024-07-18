@@ -38,23 +38,13 @@ const Userprofile = () => {
       if (response.status === 201 || response.status === 200) {
         window.location.reload();
       }
-    } catch (error) {
-      console.error(
-        "Error submitting comment:",
-        error.response ? error.response.data : error.message
-      );
-    }
+    } catch (error) {}
   };
 
   const deletepost = (postId) => {
-    AxiosInstance.delete(`posts/artcafepost/${postId}/`)
-      .then((response) => {
-        console.log("Delete successful", response);
-        window.location.reload();
-      })
-      .catch((error) => {
-        console.error("Error during delete", error);
-      });
+    AxiosInstance.delete(`posts/artcafepost/${postId}/`).then((response) => {
+      window.location.reload();
+    });
   };
 
   useEffect(() => {
@@ -69,7 +59,6 @@ const Userprofile = () => {
           .sort((a, b) => b.post_id - a.post_id);
         setPosts(filteredAndSortedPosts);
       } catch (error) {
-        console.error("Error fetching profile or posts:", error);
         setError(error.message || "Error fetching profile or posts!");
       } finally {
         setLoading(false);
@@ -83,10 +72,8 @@ const Userprofile = () => {
     const fetchComment = async () => {
       try {
         const response = await AxiosInstance.get("posts/artcafepost/comments");
-        console.log("Comments fetched: ", response.data);
         setComment(response.data.sort((a, b) => b.comment_id - a.comment_id));
       } catch (error) {
-        console.error("Error fetching comments:", error);
         setError("Error fetching comments");
       } finally {
         setLoading(false);
@@ -95,6 +82,14 @@ const Userprofile = () => {
 
     fetchComment();
   }, []);
+
+  const deletecomment = (postId, commentId) => {
+    AxiosInstance.delete(
+      `posts/artcafepost/${postId}/comments/${commentId}`
+    ).then((response) => {
+      window.location.reload();
+    });
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -125,11 +120,11 @@ const Userprofile = () => {
                 modal
                 contentStyle={{
                   backgroundColor: "#FFFFFF",
-                  padding: "20px", 
-                  borderRadius: "15px", 
+                  padding: "20px",
+                  borderRadius: "15px",
                   zIndex: "1000",
-                  width: "90%", 
-                  maxWidth: "500px", 
+                  width: "90%",
+                  maxWidth: "500px",
                 }}
                 overlayStyle={{
                   backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -289,6 +284,22 @@ const Userprofile = () => {
                                     comment.date_created
                                   ).toLocaleDateString()}
                                 </span>
+                                {Token &&
+                                  loggedInUserId.toString() ===
+                                    comment.user_id.toString() && (
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        deletecomment(
+                                          postItem.post_id,
+                                          comment.comment_id
+                                        )
+                                      }
+                                      className="md:ml-[850px] bg-[#ff90e8] text-white rounded-lg px-4 sm:px-5 py-2.5 cursor-pointer text-sm sm:text-base"
+                                    >
+                                      Delete
+                                    </button>
+                                  )}
                               </div>
                               <p className="text-base">{comment.content}</p>
                             </div>
