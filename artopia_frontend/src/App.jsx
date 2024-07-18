@@ -12,6 +12,8 @@ import Contactus from "./pages/contactus";
 import Cart from "./pages/cart";
 
 const App = () => {
+  const Token = localStorage.getItem("Token");
+
   return (
     <CartProvider>
       <div>
@@ -22,8 +24,13 @@ const App = () => {
               <Route path="/about" element={<About />} />
               <Route path="/artcafe" element={<Artcafe />} />
               <Route path="/market" element={<Market />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
+
+              {!Token && (
+                <>
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/login" element={<Login />} />
+                </>
+              )}
               <Route path="/userprofile/:userId" element={<Userprofile />} />
               <Route path="/contactus" element={<Contactus />} />
               <Route path="/cart" element={<Cart />} />
