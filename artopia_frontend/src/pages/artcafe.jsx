@@ -62,8 +62,9 @@ const Artcafe = () => {
           },
         }
       );
-      window.location.reload(); // Check the response from the server
-    } catch (error) {
+if (response.status === 201 || response.status === 200) {
+      window.location.reload();
+    }    } catch (error) {
       console.error(
         "Error submitting comment:",
         error.response ? error.response.data : error.message // More specific error message
@@ -133,7 +134,7 @@ const Artcafe = () => {
             <form method="post" onSubmit={handleSubmit(submission)}>
               <textarea
                 rows="2"
-                placeholder="Write something"
+                placeholder="Share your post description (Required)"
                 id="textarea"
                 {...register("description")}
                 required

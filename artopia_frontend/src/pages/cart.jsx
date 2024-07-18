@@ -53,7 +53,7 @@ const Cart = () => {
                 <img
                   src={item.image}
                   alt={item.name}
-                  className="w-full h-[200px] rounded-[15px] shadow-md shadow-[#e98acc]"
+                  className="w-auto h-[200px] rounded-[15px] shadow-md shadow-[#e98acc]"
                 />
               </div>
             </div>
