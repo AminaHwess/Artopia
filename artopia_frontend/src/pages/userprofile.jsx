@@ -7,6 +7,7 @@ import ProfileCustom from "./profile_customization/profilecustom.jsx";
 import Popup from "reactjs-popup";
 import Navbar from "../components/Navbar/Navbar.jsx";
 import { Settings } from "lucide-react";
+import { MessageCircle, ThumbsUp, ThumbsDown } from "lucide-react";
 
 const Userprofile = () => {
   const { userId } = useParams();
@@ -15,7 +16,44 @@ const Userprofile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("Token"));
+  const [comment, setComment] = useState([]);
   const loggedInUserId = localStorage.getItem("UserId");
+  const Token = localStorage.getItem("Token");
+
+  const postComment = async (data, postId) => {
+    const formData2 = new FormData();
+    formData2.append("content", data.content);
+
+    try {
+      const response = await AxiosInstance.post(
+        `posts/artcafepost/${postId}/comments/`,
+        formData2,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Token ${Token}`, // Ensure the token is valid
+          },
+        }
+      );
+      window.location.reload(); // Check the response from the server
+    } catch (error) {
+      console.error(
+        "Error submitting comment:",
+        error.response ? error.response.data : error.message // More specific error message
+      );
+    }
+  };
+
+  const deletepost = (postId) => {
+    AxiosInstance.delete(`posts/artcafepost/${postId}/`)
+      .then((response) => {
+        console.log("Delete successful", response);
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error("Error during delete", error);
+      });
+  };
 
   useEffect(() => {
     const fetchProfileAndPosts = async () => {
@@ -40,6 +78,23 @@ const Userprofile = () => {
 
     fetchProfileAndPosts();
   }, [userId]);
+
+  useEffect(() => {
+    const fetchComment = async () => {
+      try {
+        const response = await AxiosInstance.get("posts/artcafepost/comments");
+        console.log("Comments fetched: ", response.data);
+        setComment(response.data.sort((a, b) => b.comment_id - a.comment_id));
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+        setError("Error fetching comments");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchComment();
+  }, []);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -97,16 +152,25 @@ const Userprofile = () => {
         </div>
       </div>
       {/* Post Box */}
-      <div className="rounded-lg mx-auto mt-12 p-6 w-full sm:w-[90%]">
+      <div className="md:mx-[250px] mt-12">
         <div className="user-post">
           {/* Loop through the user's posts */}
           {posts.length > 0 ? (
             posts.map((postItem) => (
               <div
                 key={postItem.post_id}
-                className="post-container bg-white rounded-2xl p-4 sm:p-6 mb-6 shadow-lg  relative"
+                className="post-container bg-white rounded-lg p-4 sm:p-6 mb-6 shadow-xl relative"
               >
-                <div className="post-header md:flex md:flex-row  md:items-center flex mb-4">
+                {Token && loggedInUserId === userId && (
+                  <button
+                    type="button"
+                    onClick={() => deletepost(postItem.post_id)}
+                    className="md:ml-[850px] font-mono bg-[#ff90e8] text-white rounded-lg px-4 sm:px-5 py-2.5 cursor-pointer text-sm sm:text-base"
+                  >
+                    Delete
+                  </button>
+                )}
+                <div className="post-header md:flex md:flex-row md:items-center flex mb-4">
                   <figure className="w-12 h-12 rounded-full overflow-hidden mr-4">
                     <img
                       src={`http://localhost:8000${postItem.user_image}`}
@@ -115,7 +179,7 @@ const Userprofile = () => {
                     />
                   </figure>
                   <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-1">
+                    <div className="flex items-center space-x-2">
                       <Link
                         to={`/userprofile/${postItem.user_id}`}
                         className="text-black font-bold text-lg sm:text-xl"
@@ -143,90 +207,96 @@ const Userprofile = () => {
                           type="video/mp4"
                         />
                       </video>
+                    ) : postItem.file.endsWith(".mp3") ||
+                      postItem.file.endsWith(".wav") ? (
+                      <audio controls className="w-full sm:w-[50%] mx-auto">
+                        <source
+                          src={`http://localhost:8000${postItem.file}`}
+                          type={
+                            postItem.file.endsWith(".mp3")
+                              ? "audio/mpeg"
+                              : "audio/wav"
+                          }
+                        />
+                        Your browser does not support the audio element.
+                      </audio>
                     ) : (
                       <img
                         src={`http://localhost:8000${postItem.file}`}
                         alt="Post Content"
-                        className="w-[400px] mx-auto object-cover"
+                        className="w-full sm:w-[50%] mx-auto object-cover"
                       />
                     ))}
+
                   <p className="text-base mt-8">{postItem.description}</p>
                 </div>
                 <div className="post-interactions flex flex-col sm:flex-row items-start sm:items-center mb-4">
-                  <ul className="flex flex-wrap gap-4 sm:flex-nowrap sm:space-x-4">
+                  <ul className="flex flex-col sm:flex-row flex-grow space-y-2 sm:space-x-4 sm:space-y-0">
                     <li className="flex items-center text-sm">
-                      <span
-                        className="text-lg font-light cursor-pointer hover:scale-110 transition-transform"
-                        title="Comments"
-                      >
-                        <i className="fa fa-comment"></i>
-                        <ins className="ml-1">{postItem.comments_count}</ins>
+                      <span>
+                        <MessageCircle strokeWidth={2} size={18} />
                       </span>
                     </li>
                     <li className="flex items-center text-sm">
-                      <span
-                        className="text-green-500 cursor-pointer hover:scale-110 transition-transform"
-                        title="Like"
-                      >
-                        <i className="ti ti-heart"></i>
-                        <ins className="ml-1">{postItem.likes_count}</ins>
+                      <span>
+                        <ThumbsUp strokeWidth={2} size={18} color="#0FFF50" />
                       </span>
                     </li>
                     <li className="flex items-center text-sm">
-                      <span
-                        className="text-red-500 cursor-pointer hover:scale-110 transition-transform"
-                        title="Dislike"
-                      >
-                        <i className="ti ti-heart-broken"></i>
-                        <ins className="ml-1">{postItem.dislikes_count}</ins>
+                      <span>
+                        <ThumbsDown strokeWidth={2} size={18} color="#FF0000" />
                       </span>
                     </li>
                     <li className="flex items-center text-sm">
-                      <ShareButtons />
+                      <ShareButtons
+                        title={postItem.description}
+                        url={`http://localhost:8000${postItem.file}`}
+                      />
                     </li>
                   </ul>
                 </div>
 
                 {/* Comment Area */}
-                <div className="comment-area mt-4 bg-white p-4">
-                  <ul className="space-y-4">
-                    {postItem.comments && postItem.comments.length > 0 ? (
-                      postItem.comments.map((comment, index) => (
-                        <li key={index} className="flex items-start space-x-4">
-                          <div className="w-1/12">
-                            <img
-                              src={
-                                comment.user_image ||
-                                "src/assets/profile_pics/default.jpg"
-                              }
-                              alt="Comment Avatar"
-                              className="rounded-full w-12 h-12"
-                            />
-                          </div>
-                          <div className="flex-1">
-                            <div className=" p-4 rounded-lg">
-                              <div className="mb-2">
-                                <Link
-                                  to={`/userprofile/${comment.user_id}`}
-                                  className="text-black font-bold"
-                                >
-                                  {comment.username}
-                                </Link>
-                                <span className="text-gray-500 text-sm ml-2">
+                <div className="coment-area">
+                  <ul className="we-comet">
+                    {comment
+                      .filter((comment) => comment.post_id === postItem.post_id)
+                      .map((comment) => (
+                        <li
+                          key={comment.comment_id}
+                          className="bg-white p-4 sm:p-6 rounded-lg shadow-lg shadow-pink-500/50 mt-4"
+                        >
+                          <div className="post-header md:flex md:flex-row md:items-center flex mb-4">
+                            <figure className="w-12 h-12 rounded-full overflow-hidden mr-4">
+                              <img
+                                src={`http://localhost:8000${comment.user_image}`}
+                                alt="Profile"
+                                className="w-full h-full object-cover"
+                              />
+                            </figure>
+                            <div className="we-comment flex-1">
+                              <div className="coment-head flex items-center space-x-2">
+                                <ins className="block text-base sm:text-lg font-bold">
+                                  <Link
+                                    to={`/userprofile/${comment.user_id}`}
+                                    className="text-black font-bold text-lg sm:text-xl"
+                                  >
+                                    {comment.username}
+                                  </Link>
+                                </ins>
+                                <span className="text-gray-500 text-sm">
                                   {new Date(
                                     comment.date_created
                                   ).toLocaleDateString()}
                                 </span>
                               </div>
-                              <p className="text-gray-800">{comment.comment}</p>
+                              <p className="text-base">{comment.content}</p>
                             </div>
                           </div>
                         </li>
-                      ))
-                    ) : (
-                      <p>No comments available</p>
-                    )}
+                      ))}
                   </ul>
+
                   {/* Comment Form */}
                   {token && (
                     <div className="flex flex-col items-center w-full mt-4">
@@ -235,21 +305,25 @@ const Userprofile = () => {
                         onSubmit={(e) => {
                           e.preventDefault();
                           const formData = new FormData(e.target);
-                          postComment(postItem.post_id, {
-                            comment: formData.get("comment"),
-                          });
+                          const postId = postItem.post_id; // Ensure this is correctly set
+                          postComment(
+                            {
+                              content: formData.get("content"),
+                            },
+                            postId
+                          );
                         }}
                         className="flex flex-col items-center w-full max-w-lg"
                       >
                         <textarea
-                          name="comment"
+                          name="content"
                           placeholder="Post your comment"
                           required
                           className=" border-2 p-2 w-full h-16 text-black text-sm mb-2 rounded-lg resize-none"
                         ></textarea>
                         <button
                           type="submit"
-                          className="bg-[#6d0666] text-white rounded-lg px-4 py-2 mt-2 cursor-pointer text-sm sm:text-base w-full max-w-xs"
+                          className="bg-[#ff90e8] font-mono text-white rounded-lg px-4 py-2 mt-2 cursor-pointer text-sm sm:text-base w-full max-w-xs"
                         >
                           Post
                         </button>
@@ -264,7 +338,6 @@ const Userprofile = () => {
           )}
         </div>
       </div>
-
       <Footer />
     </div>
   );

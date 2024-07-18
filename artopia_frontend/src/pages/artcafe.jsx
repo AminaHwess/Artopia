@@ -6,14 +6,19 @@ import ShareButtons from "../components/ShareButtons/sharebutton.jsx";
 import Footer from "../components/Footer/Footer.jsx";
 import AxiosInstance from "./Axios/AxiosInstance.jsx";
 import { useForm } from "react-hook-form";
+import { MessageCircle, ThumbsUp, ThumbsDown } from "lucide-react";
 
 const Artcafe = () => {
   const Token = localStorage.getItem("Token");
   const { register, handleSubmit } = useForm();
   const { scrollYProgress } = useScroll();
   const [post, setPost] = useState([]);
+  const [comment, setComment] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const loggedInUserId = localStorage.getItem("UserId");
+
+  
 
   const submission = async (data) => {
     const formData = new FormData();
@@ -35,10 +40,34 @@ const Artcafe = () => {
           Authorization: `Token ${Token}`,
         },
       });
-      window.location.reload()
+      window.location.reload();
     } catch (error) {
       console.error("Error posting new art cafe post:", error);
       setError("Error posting new art cafe post");
+    }
+  };
+
+  const postComment = async (data, postId) => {
+    const formData2 = new FormData();
+    formData2.append("content", data.content);
+
+    try {
+      const response = await AxiosInstance.post(
+        `posts/artcafepost/${postId}/comments/`,
+        formData2,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Token ${Token}`, // Ensure the token is valid
+          },
+        }
+      );
+      window.location.reload(); // Check the response from the server
+    } catch (error) {
+      console.error(
+        "Error submitting comment:",
+        error.response ? error.response.data : error.message // More specific error message
+      );
     }
   };
 
@@ -59,6 +88,34 @@ const Artcafe = () => {
     fetchPost();
   }, []);
 
+  useEffect(() => {
+    const fetchComment = async () => {
+      try {
+        const response = await AxiosInstance.get("posts/artcafepost/comments");
+        console.log("Comments fetched: ", response.data);
+        setComment(response.data.sort((a, b) => b.comment_id - a.comment_id));
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+        setError("Error fetching comments");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchComment();
+  }, []);
+
+  const deletepost = (postId) => {
+    AxiosInstance.delete(`posts/artcafepost/${postId}/`)
+      .then((response) => {
+        console.log("Delete successful", response);
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error("Error during delete", error);
+      });
+  };
+
   return (
     <div className="artwisdom">
       <motion.div
@@ -72,24 +129,20 @@ const Artcafe = () => {
       >
         <Navbar />
         {Token && (
-          <div className="post-form-container mx-4 sm:mx-auto max-w-full sm:max-w-3xl bg-white p-4 sm:p-5 rounded-lg shadow-lg shadow-pink-500/50 mb-10">
-            <form
-              method="post"
-              onSubmit={handleSubmit(submission)}
-              encType="multipart/form-data"
-            >
+          <div className="post-form-container mx-4 sm:mx-auto max-w-full sm:max-w-3xl bg-white p-4 sm:p-5 rounded-lg shadow-xl mb-10">
+            <form method="post" onSubmit={handleSubmit(submission)}>
               <textarea
                 rows="2"
                 placeholder="Write something"
                 id="textarea"
                 {...register("description")}
                 required
-                className="border-[#6d0666] border-2 p-3 sm:p-5 w-full rounded-lg resize-none text-base font-sans"
+                className="border-[#ff90e8] border-2 p-3 sm:p-5 w-full rounded-lg resize-none text-base font-sans"
               />
               <div className="flex flex-col sm:flex-row justify-between items-center mt-5">
                 <div className="flex flex-wrap gap-4 mb-4 sm:mb-0">
                   <label className="relative w-[32px] h-[32px]">
-                    <i className="material-icons text-[#6d0666] text-xl sm:text-2xl cursor-pointer">
+                    <i className="material-icons text-[#ff90e8] text-xl sm:text-2xl cursor-pointer">
                       music_note
                     </i>
                     <input
@@ -99,7 +152,7 @@ const Artcafe = () => {
                     />
                   </label>
                   <label className="relative w-[32px] h-[32px]">
-                    <i className="material-icons text-[#6d0666] text-xl sm:text-2xl cursor-pointer">
+                    <i className="material-icons text-[#ff90e8] text-xl sm:text-2xl cursor-pointer">
                       image
                     </i>
                     <input
@@ -109,7 +162,7 @@ const Artcafe = () => {
                     />
                   </label>
                   <label className="relative w-[32px] h-[32px]">
-                    <i className="material-icons text-[#6d0666] text-xl sm:text-2xl cursor-pointer">
+                    <i className="material-icons text-[#ff90e8] text-xl sm:text-2xl cursor-pointer">
                       videocam
                     </i>
                     <input
@@ -121,7 +174,7 @@ const Artcafe = () => {
                 </div>
                 <button
                   type="submit"
-                  className="bg-[#6d0666] text-white rounded-lg px-4 sm:px-5 py-2.5 cursor-pointer text-sm sm:text-base"
+                  className="bg-[#ff90e8] text-white rounded-lg px-4 sm:px-5 py-2.5 cursor-pointer text-sm sm:text-base"
                 >
                   Post
                 </button>
@@ -129,8 +182,8 @@ const Artcafe = () => {
             </form>
           </div>
         )}
-
-        <div className="post-list bg-[#fdfdfd] rounded-lg w-full sm:w-[90%] mx-4 sm:mx-auto p-4 sm:p-6 shadow-lg shadow-pink-500/50">
+        {/* Posts section */}
+        <div className="md:mx-[250px]">
           {loading ? (
             <p>Loading...</p>
           ) : error ? (
@@ -139,33 +192,46 @@ const Artcafe = () => {
             <p>No posts available</p>
           ) : (
             post.map((postItem) => (
+              
               <div
                 key={postItem.post_id}
-                className="post-container bg-white rounded-lg p-4 sm:p-6 mb-6 shadow-lg shadow-pink-500/50"
+                className="post-container bg-white rounded-lg p-4 sm:p-6 mb-6 shadow-xl relative"
               >
-                <div className="post-header flex flex-col sm:flex-row items-start sm:items-center mb-4">
-                  <figure className="w-[30%] sm:w-[10%] rounded-full overflow-hidden mb-2 sm:mb-0 sm:mr-4">
+                
+                {Token && loggedInUserId.toString() === postItem.user_id.toString() && (
+                  <button
+                    type="button"
+                    onClick={() => deletepost(postItem.post_id)}
+                    className="md:ml-[850px] bg-[#ff90e8] text-white rounded-lg px-4 sm:px-5 py-2.5 cursor-pointer text-sm sm:text-base"
+                  >
+                    Delete
+                  </button>
+                )}
+
+                <div className="post-header md:flex md:flex-row md:items-center flex mb-4">
+                  <figure className="w-12 h-12 rounded-full overflow-hidden mr-4">
                     <img
                       src={`http://localhost:8000${postItem.user_image}`}
                       alt="Profile"
-                      className="rounded-full h-[50px] w-[50px]"
+                      className="w-full h-full object-cover"
                     />
                   </figure>
                   <div className="flex-1">
-                    <ins className="block text-base sm:text-lg font-bold">
+                    <ins className="flex items-center space-x-2">
                       <Link
                         to={`/userprofile/${postItem.user_id}`}
-                        className="no-underline text-black "
+                        className="text-black font-bold text-lg sm:text-xl "
                       >
                         {postItem.username}
                       </Link>
                     </ins>
-                    <span className="text-gray-500 text-sm">{`published: ${new Date(
+                    <span className="text-gray-500 text-sm">{`Published: ${new Date(
                       postItem.date_created
                     ).toLocaleString()}`}</span>
                   </div>
                 </div>
                 <div className="post-content mb-4">
+                  <p className="text-base mt-4">{postItem.description}</p>
                   {postItem.file &&
                     (postItem.file.endsWith(".mp4") ? (
                       <video
@@ -177,6 +243,19 @@ const Artcafe = () => {
                           type="video/mp4"
                         />
                       </video>
+                    ) : postItem.file.endsWith(".mp3") ||
+                      postItem.file.endsWith(".wav") ? (
+                      <audio controls className="w-full sm:w-[50%] mx-auto">
+                        <source
+                          src={`http://localhost:8000${postItem.file}`}
+                          type={
+                            postItem.file.endsWith(".mp3")
+                              ? "audio/mpeg"
+                              : "audio/wav"
+                          }
+                        />
+                        Your browser does not support the audio element.
+                      </audio>
                     ) : (
                       <img
                         src={`http://localhost:8000${postItem.file}`}
@@ -184,39 +263,29 @@ const Artcafe = () => {
                         className="w-full sm:w-[50%] mx-auto object-cover"
                       />
                     ))}
-                  <p className="text-base mt-4">{postItem.description}</p>
                 </div>
                 <div className="post-interactions flex flex-col sm:flex-row items-start sm:items-center mb-4">
                   <ul className="flex flex-col sm:flex-row flex-grow space-y-2 sm:space-x-4 sm:space-y-0">
                     <li className="flex items-center text-sm">
-                      <span
-                        className="text-lg font-light cursor-pointer hover:scale-110 transition-transform"
-                        title="Comments"
-                      >
-                        <i className="fa fa-comment"></i>
-                        <ins className="ml-1">{postItem.comments_count}</ins>
+                      <span>
+                        <MessageCircle strokeWidth={2} size={18} />
                       </span>
                     </li>
                     <li className="flex items-center text-sm">
-                      <span
-                        className="text-green-500 cursor-pointer hover:scale-110 transition-transform"
-                        title="Like"
-                      >
-                        <i className="ti ti-heart"></i>
-                        <ins className="ml-1">{postItem.likes_count}</ins>
+                      <span>
+                        <ThumbsUp strokeWidth={2} size={18} color="#0FFF50" />
                       </span>
                     </li>
                     <li className="flex items-center text-sm">
-                      <span
-                        className="text-red-500 cursor-pointer hover:scale-110 transition-transform"
-                        title="Dislike"
-                      >
-                        <i className="ti ti-heart-broken"></i>
-                        <ins className="ml-1">{postItem.dislikes_count}</ins>
+                      <span>
+                        <ThumbsDown strokeWidth={2} size={18} color="#FF0000" />
                       </span>
                     </li>
                     <li className="flex items-center text-sm">
-                      <ShareButtons />
+                      <ShareButtons
+                        title={postItem.description}
+                        url={`http://localhost:8000${postItem.file}`}
+                      />
                     </li>
                   </ul>
                 </div>
@@ -224,66 +293,75 @@ const Artcafe = () => {
                 {/* Comment Area */}
                 <div className="coment-area">
                   <ul className="we-comet">
-                    {postItem.comments && postItem.comments.length > 0 ? (
-                      postItem.comments.map((comment, index) => (
-                        <li key={index}>
-                          <ul>
-                            <li>
-                              <div className="comet-avatar">
-                                <img
-                                  src={
-                                    comment.user_image ||
-                                    "src/assets/profile_pics/default.jpg"
-                                  }
-                                  alt="Comment Avatar"
-                                />
+                    {comment
+                      .filter((comment) => comment.post_id === postItem.post_id)
+                      .map((comment) => (
+                        <li
+                          key={comment.comment_id}
+                          className="bg-white p-4 sm:p-6 rounded-lg shadow-lg shadow-pink-500/50 mt-4"
+                        >
+                          <div className="post-header md:flex md:flex-row md:items-center flex mb-4">
+                            <figure className="w-12 h-12 rounded-full overflow-hidden mr-4">
+                              <img
+                                src={`http://localhost:8000${comment.user_image}`}
+                                alt="Profile"
+                                className="w-full h-full object-cover"
+                              />
+                            </figure>
+                            <div className="we-comment flex-1">
+                              <div className="coment-head flex items-center space-x-2">
+                                <ins className="block text-base sm:text-lg font-bold">
+                                  <Link
+                                    to={`/userprofile/${comment.user_id}`}
+                                    className="text-black font-bold text-lg sm:text-xl"
+                                  >
+                                    {comment.username}
+                                  </Link>
+                                </ins>
+                                <span className="text-gray-500 text-sm">
+                                  {new Date(
+                                    comment.date_created
+                                  ).toLocaleDateString()}
+                                </span>
                               </div>
-                              <div className="we-comment">
-                                <div className="coment-head">
-                                  <h5>
-                                    <Link
-                                      to={`/userprofile/${comment.user_id}`}
-                                      className="friendname"
-                                    >
-                                      {comment.username}
-                                    </Link>
-                                  </h5>
-                                  <span>
-                                    {new Date(
-                                      comment.date_created
-                                    ).toLocaleDateString()}
-                                  </span>
-                                </div>
-                                <p>{comment.text}</p>
-                              </div>
-                            </li>
-                          </ul>
+                              <p className="text-base">{comment.content}</p>
+                            </div>
+                          </div>
                         </li>
-                      ))
-                    ) : (
-                      <p>No comments available</p>
-                    )}
+                      ))}
                   </ul>
+
                   {/* Comment Form */}
                   {Token && (
                     <div className="flex flex-col items-center w-full mt-4">
                       <form
-                        onSubmit={handleSubmit((data) =>
-                          postComment(postItem.post_id, data)
-                        )}
-                        className="flex flex-col items-end w-full max-w-full"
+                        method="post"
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          const formData = new FormData(e.target);
+                          const postId = postItem.post_id; // Ensure this is correctly set
+                          postComment(
+                            {
+                              content: formData.get("content"),
+                            },
+                            postId
+                          );
+                        }}
+                        className="flex flex-col items-center w-full max-w-lg"
                       >
                         <textarea
-                          {...register("comment")}
+                          name="content"
+                          placeholder="Post your comment"
+                          {...register("content")}
                           required
-                          placeholder="Add a comment..."
-                          className="border-[#6d0666] border-2 p-2 w-full rounded-lg resize-none text-base font-sans"
-                        />
+                          className=" border-2 p-2 w-full h-16 text-black text-sm mb-2 rounded-lg resize-none"
+                        ></textarea>
+
                         <button
                           type="submit"
-                          className="bg-[#6d0666] text-white rounded-lg px-4 py-2 mt-2 cursor-pointer text-sm sm:text-base w-[10%] self-end"
+                          className="bg-[#ff90e8] font-mono text-white rounded-lg px-4 py-2 mt-2 cursor-pointer text-sm sm:text-base w-full max-w-xs"
                         >
-                          Submit
+                          Post
                         </button>
                       </form>
                     </div>

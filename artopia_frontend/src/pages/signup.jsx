@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion, useScroll } from "framer-motion";
 import Navbar from "../components/Navbar/Navbar";
 import Footer from "../components/Footer/Footer.jsx";
@@ -14,12 +14,13 @@ import AxiosInstance from "./Axios/AxiosInstance.jsx";
 
 const Signup = () => {
   const { scrollYProgress } = useScroll();
-  const [generalError, setGeneralError] = useState("");
 
   const schema = yup.object({
     email: yup
-      .string(),
-    username: yup.string(),
+      .string()
+      .email("Invalid email format")
+      .required("Email is required"),
+    username: yup.string().required("Username is required"),
     password1: yup
       .string()
       .required("Password is a required field")
@@ -37,14 +38,17 @@ const Signup = () => {
       .oneOf([yup.ref("password1"), null], "Passwords must match"),
   });
 
-  const { control, handleSubmit, setError } = useForm({
+  const {
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(schema),
   });
   const navigate = useNavigate();
 
   const submission = (data) => {
-    setGeneralError(""); // Reset general error message
-
     // Ensure password confirmation matches before sending to backend
     if (data.password1 !== data.password2) {
       setError("password2", {
@@ -81,9 +85,12 @@ const Signup = () => {
               message: backendErrors.email,
             });
           }
-
         } else {
-          setGeneralError("Email or Username already in use.");
+          setError("server", {
+            type: "manual",
+            message:
+              "Error signing up: Please check your email or username, as it may already be in use.",
+          });
         }
       });
   };
@@ -111,29 +118,50 @@ const Signup = () => {
           className="w-[80%] ml-[30px]"
           alt="Artopia Logo"
         />
-        <form autoComplete="on" onSubmit={handleSubmit(submission)} className="px-5">
+        <form
+          autoComplete="on"
+          onSubmit={handleSubmit(submission)}
+          className="px-5"
+        >
           <label className="block text-center mb-2 text-sm text-gray-600 font-bold">
             Username:
           </label>
           <UsernameField control={control} />
-
+          {errors.username && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.username.message}
+            </p>
+          )}
           <label className="block text-center mb-2 text-sm text-gray-600 font-bold">
             Email:
           </label>
           <EmailField control={control} />
+          {errors.email && (
+            <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+          )}
 
           <label className="block text-center mb-2 text-sm text-gray-600 font-bold">
             Password:
           </label>
           <PasswordField1 control={control} />
+          {errors.password1 && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.password1.message}
+            </p>
+          )}
 
           <label className="block text-center mb-2 text-sm text-gray-600 font-bold">
             Repeat Password:
           </label>
           <PasswordField2 control={control} />
+          {errors.password2 && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.password2.message}
+            </p>
+          )}
 
-          {generalError && (
-            <p className="text-red-500 text-center mt-2">{generalError}</p>
+          {errors.server && (
+            <p className="text-red-500 text-sm mt-1">{errors.server.message}</p>
           )}
 
           <input

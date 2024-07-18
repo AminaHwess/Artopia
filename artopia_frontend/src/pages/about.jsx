@@ -28,7 +28,6 @@ const About = () => {
 
         <div>
           {/* Carousel Images Introducing The Website Features and a Box with more Details */}
-
           <div className="flex justify-center">
             <div className="md:w-1/2 mt-[30px] rounded-[15px] md:h-[530px]">
               <Carousel
@@ -50,7 +49,7 @@ const About = () => {
                 </div>
                 <div>
                   <img
-                    src="/src/assets/slider/arttherapy.JPG"
+                    src="/slider/arttherapy.JPG"
                     alt="Image 2"
                     className="w-full h-auto block mx-auto brightness-[0.9] contrast-[1.9] 
                     image-rendering-auto rounded-[15px] object-cover mt-[37px]"
@@ -58,7 +57,7 @@ const About = () => {
                 </div>
                 <div>
                   <img
-                    src="/src/assets/slider/communityinteraction.JPG"
+                    src="/slider/communityinteraction.JPG"
                     alt="Image 3"
                     className="w-full h-auto block mx-auto brightness-[0.9] contrast-[1.9] 
                     image-rendering-auto rounded-[15px] object-cover mt-[37px]"
@@ -66,7 +65,7 @@ const About = () => {
                 </div>
                 <div>
                   <img
-                    src="/src/assets/slider/showcaseartwork.JPG"
+                    src="/slider/showcaseartwork.JPG"
                     alt="Image 4"
                     className="w-full h-auto block mx-auto brightness-[0.9] contrast-[1.9] 
                     image-rendering-auto rounded-[15px] object-cover mt-[37px]"
@@ -74,7 +73,7 @@ const About = () => {
                 </div>
                 <div>
                   <img
-                    src="/src/assets/slider/sellingart.JPG"
+                    src="/slider/sellingart.JPG"
                     alt="Image 5"
                     className="w-full h-auto block mx-auto brightness-[0.9] contrast-[1.9] image-rendering-auto rounded-[15px] object-cover mt-[37px]"
                   />
@@ -103,7 +102,7 @@ const About = () => {
                 className="bg-white rounded-lg p-6 shadow-md text-center transform transition-transform duration-200 hover:scale-105 cursor-pointer"
               >
                 <img
-                  src="/src/assets/artists.png"
+                  src="/artists.png"
                   className="card-image w-70 object-cover p-3 mx-auto d-block"
                   alt="Showcase Art"
                 />
@@ -118,7 +117,7 @@ const About = () => {
                 className="bg-white rounded-lg p-6 shadow-md text-center transform transition-transform duration-200 hover:scale-105 cursor-pointer"
               >
                 <img
-                  src="/src/assets/community.png"
+                  src="/community.png"
                   className="card-image w-70 object-cover p-3 mx-auto d-block"
                   alt="Connect"
                 />
@@ -133,7 +132,7 @@ const About = () => {
                 className="bg-white rounded-lg p-6 shadow-md text-center transform transition-transform duration-200 hover:scale-105 cursor-pointer"
               >
                 <img
-                  src="/src/assets/onlineart.png"
+                  src="/onlineart.png"
                   className="card-image w-70 object-cover p-3 mx-auto d-block"
                   alt="Market"
                 />

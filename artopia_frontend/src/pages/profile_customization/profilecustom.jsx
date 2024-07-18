@@ -65,7 +65,7 @@ const ProfileCustom = () => {
 
       {/* Change Photo Section */}
       <div className="flex flex-col items-center mb-6">
-        <img src="\src\assets\artopialogo.png" className="w-[80%] mx-auto " alt="Artopia Logo" />
+        <img src="\artopialogo.png" className="w-[80%] mx-auto " alt="Artopia Logo" />
         <label htmlFor="file-upload" className="mb-4 cursor-pointer mt-12">
         <label htmlFor="bio" className="block mb-2 md:text-xl font-serif text-xl text-gray-500 font-bold">
           Chnage Your Profile Picture
