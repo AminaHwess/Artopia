@@ -31,15 +31,17 @@ const Userprofile = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Token ${Token}`, // Ensure the token is valid
+            Authorization: `Token ${Token}`,
           },
         }
       );
-      window.location.reload(); // Check the response from the server
+      if (response.status === 201 || response.status === 200) {
+        window.location.reload();
+      }
     } catch (error) {
       console.error(
         "Error submitting comment:",
-        error.response ? error.response.data : error.message // More specific error message
+        error.response ? error.response.data : error.message
       );
     }
   };
@@ -58,11 +60,9 @@ const Userprofile = () => {
   useEffect(() => {
     const fetchProfileAndPosts = async () => {
       try {
-        // Fetch the user profile
         const profileResponse = await AxiosInstance.get(`/profile/${userId}/`);
         setProfile(profileResponse.data);
 
-        // Fetch the user's posts with filtering and sorting
         const postsResponse = await AxiosInstance.get(`posts/artcafeposts/`);
         const filteredAndSortedPosts = postsResponse.data
           .filter((post) => post.user_id == userId)
@@ -125,14 +125,14 @@ const Userprofile = () => {
                 modal
                 contentStyle={{
                   backgroundColor: "#FFFFFF",
-                  padding: "20px", // Padding for mobile
-                  borderRadius: "15px", // Border radius for mobile
+                  padding: "20px", 
+                  borderRadius: "15px", 
                   zIndex: "1000",
-                  width: "90%", // Width for mobile
-                  maxWidth: "500px", // Maximum width
+                  width: "90%", 
+                  maxWidth: "500px", 
                 }}
                 overlayStyle={{
-                  backgroundColor: "rgba(0, 0, 0, 0.5)", // Optional: Semi-transparent background
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
                 }}
               >
                 <span>
@@ -305,7 +305,7 @@ const Userprofile = () => {
                         onSubmit={(e) => {
                           e.preventDefault();
                           const formData = new FormData(e.target);
-                          const postId = postItem.post_id; // Ensure this is correctly set
+                          const postId = postItem.post_id;
                           postComment(
                             {
                               content: formData.get("content"),

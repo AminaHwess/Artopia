@@ -49,7 +49,6 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const submission = (data) => {
-    // Ensure password confirmation matches before sending to backend
     if (data.password1 !== data.password2) {
       setError("password2", {
         type: "manual",
@@ -61,12 +60,10 @@ const Signup = () => {
     AxiosInstance.post("signup/", {
       email: data.email,
       username: data.username,
-      password: data.password1, // Send only the validated password
+      password: data.password1, 
     })
       .then((response) => {
-        // Check if the response indicates success
         if (response.status === 201) {
-          // Navigate to a success page or show a success message
           navigate("/login");
         }
       })
