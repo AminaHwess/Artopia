@@ -8,4 +8,6 @@ urlpatterns = [
     path('artcafepost/<int:post_id>/', PostDetailView.as_view(), name='post-detail'),
     path('artcafepost/<int:post_id>/comments/', CommentCreateView.as_view(), name='comment-create'),
     path('artcafepost/comments', GetAllCommentsDetailView.as_view(), name='allcomments-view'),
+    path('artcafepost/<int:post_id>/comments/<int:comment_id>', CommentDetailView.as_view(), name='comment-detail'),
+
 ]

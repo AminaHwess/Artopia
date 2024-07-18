@@ -89,3 +89,29 @@ class GetAllCommentsDetailView(APIView):
         comments = Comment.objects.all()
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
+
+
+class CommentDetailView(APIView):
+    permission_classes = [AllowAny]
+    authentication_classes = (TokenAuthentication,)
+
+    def get_permissions(self):
+        if self.request.method in ['DELETE']:
+            return [IsAuthenticated()]  
+        return [AllowAny()]  
+
+    def get(self, request, comment_id):
+        try:
+            comments = Comment.objects.get(id=comment_id)
+            serializer = CommentSerializer(comments)
+            return Response(serializer.data)
+        except Comment.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, post_id, comment_id):
+        try:
+            comments = Comment.objects.get(id=comment_id, posts_id=post_id)
+            comments.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Comment.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)    
