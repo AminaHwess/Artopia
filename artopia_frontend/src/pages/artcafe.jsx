@@ -18,8 +18,6 @@ const Artcafe = () => {
   const [error, setError] = useState(null);
   const loggedInUserId = localStorage.getItem("UserId");
 
-  
-
   const submission = async (data) => {
     const formData = new FormData();
     formData.append("description", data.description);
@@ -62,9 +60,10 @@ const Artcafe = () => {
           },
         }
       );
-if (response.status === 201 || response.status === 200) {
-      window.location.reload();
-    }    } catch (error) {
+      if (response.status === 201 || response.status === 200) {
+        window.location.reload();
+      }
+    } catch (error) {
       console.error(
         "Error submitting comment:",
         error.response ? error.response.data : error.message // More specific error message
@@ -193,21 +192,20 @@ if (response.status === 201 || response.status === 200) {
             <p>No posts available</p>
           ) : (
             post.map((postItem) => (
-              
               <div
                 key={postItem.post_id}
                 className="post-container bg-white rounded-lg p-4 sm:p-6 mb-6 shadow-xl relative"
               >
-                
-                {Token && loggedInUserId.toString() === postItem.user_id.toString() && (
-                  <button
-                    type="button"
-                    onClick={() => deletepost(postItem.post_id)}
-                    className="md:ml-[850px] bg-[#ff90e8] text-white rounded-lg px-4 sm:px-5 py-2.5 cursor-pointer text-sm sm:text-base"
-                  >
-                    Delete
-                  </button>
-                )}
+                {Token &&
+                  loggedInUserId.toString() === postItem.user_id.toString() && (
+                    <button
+                      type="button"
+                      onClick={() => deletepost(postItem.post_id)}
+                      className="md:ml-[850px] bg-[#ff90e8] text-white rounded-lg px-4 sm:px-5 py-2.5 cursor-pointer text-sm sm:text-base"
+                    >
+                      Delete
+                    </button>
+                  )}
 
                 <div className="post-header md:flex md:flex-row md:items-center flex mb-4">
                   <figure className="w-12 h-12 rounded-full overflow-hidden mr-4">
@@ -270,6 +268,13 @@ if (response.status === 201 || response.status === 200) {
                     <li className="flex items-center text-sm">
                       <span>
                         <MessageCircle strokeWidth={2} size={18} />
+                      </span>
+                      <span className="ml-1 text-gray-500">
+                        {
+                          comment.filter(
+                            (cmt) => cmt.post_id === postItem.post_id
+                          ).length
+                        }
                       </span>
                     </li>
                     <li className="flex items-center text-sm">
