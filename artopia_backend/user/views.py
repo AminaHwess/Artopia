@@ -65,7 +65,7 @@ class RegisterViewset(viewsets.ViewSet):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status=201)
         else: 
             return Response(serializer.errors,status=400)
 
@@ -75,9 +75,8 @@ class UserProfileView(RetrieveUpdateAPIView):
 
     def get_permissions(self):
         if self.request.method in ['PUT', 'PATCH']:
-            # Require authentication for PUT/PATCH requests (update operations)
             return [IsAuthenticated()]
-        return [AllowAny()]  # Allow any user for GET requests
+        return [AllowAny()]  
 
     def get_object(self):
         user_id = self.kwargs['user_id']
