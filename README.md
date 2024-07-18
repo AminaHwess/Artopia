@@ -1,8 +1,6 @@
 # Artopia
 
-<div style="text-align: center;">
-  ![Artopia Logo](artopia_frontend/public/artopialogo.png)
-</div>
+  ![Artopia Logo](artopia_frontend/public/logonobg.png)
 
 Artopia is a vibrant community for artists to express, share, and thrive together. Whether you're a painter, musician, photographer, or multimedia artist, Artopia provides the platform you need to showcase your creativity and connect with fellow artists worldwide.
 
