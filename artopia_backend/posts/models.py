@@ -6,7 +6,7 @@ from user.models import *
 class Post(models.Model):
     profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='post')
     description = models.CharField(max_length=100)
-    file = models.FileField(upload_to='documents/')
+    file = models.FileField(upload_to='documents/', null=True, blank=True)
     date_created = models.DateTimeField(default=timezone.now)
     likes = models.ManyToManyField(CustomUser, related_name='liked_post', blank=True)
     dislikes = models.ManyToManyField(CustomUser, related_name='disliked_post', blank=True)

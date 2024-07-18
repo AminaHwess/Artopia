@@ -12,9 +12,18 @@ class PostSerializer(serializers.ModelSerializer):
         read_only_fields = ['date_created', 'likes', 'dislikes', 'user_id']
 
     def create(self, validated_data):
+        file = validated_data.pop('file', None)
+
         profile = self.context['request'].user.userprofile
         validated_data['profile'] = profile
-        return Post.objects.create(**validated_data)
+        post = Post.objects.create(**validated_data)
+
+        if file:
+            post.file = file  
+            post.save()
+
+        return post
+
 
 #Comment section
 
